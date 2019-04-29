@@ -30,14 +30,13 @@ function WindowsComPortCommunication(){
    * OnReady Event called when it is ready to send message
    */
   this.onReady = new Signal() ; 
-  if(callBackOnReady){
-    me.onReady.add(callBackOnReady) ;
-  }
+  
   this.connect = ()=>{
       if(connected){
           return;
       }
       avaiblePorts.clear() ;
+      arrayPorts = [];
       SerialPort.list(function (err, ports) {
         if(me.showLog) console.log('######################################');
         if(me.showLog) console.log('Avaible Ports:')
@@ -50,6 +49,10 @@ function WindowsComPortCommunication(){
         me.onReady.dispatch() ;
         connected = true;
     });
+  }
+  this.reconnect = ()=>{
+      connected = false ;
+      me.connect() ;
   }
   function dispatchTo( portName, data ){
     getSignalToPort(portName).dispatch( data ) ;
