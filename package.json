@@ -1,0 +1,31 @@
+{
+  "name": "window-com-port",
+  "version": "1.0.0",
+  "description": "Node js Library to read and write in windows port using socket. Good for Arduino projects.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reytuty/WindowsComPortCommunication.git"
+  },
+  "keywords": [
+    "arduino",
+    "com port",
+    "windows port",
+    "write com port",
+    "read com port"
+  ],
+  "author": "Renato Seiji Miawaki",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/reytuty/WindowsComPortCommunication/issues"
+  },
+  "homepage": "https://github.com/reytuty/WindowsComPortCommunication#readme",
+  "dependencies": {
+    "serialport": "^7.1.5",
+    "signals": "^1.0.0",
+    "socketstream2event": "^1.0.4"
+  }
+}
