@@ -5,7 +5,7 @@ Node js Library to read and write in windows port using socket. Good for Arduino
 
 ```
 
-npm install window-com-port
+npm install windows-com-port
 
 ```
 
@@ -13,7 +13,7 @@ npm install window-com-port
 
 ```
 
-const WindowComPort = require('window-com-port') ;
+const WindowsComPort = require('windows-com-port') ;
 
 ```
 
@@ -21,7 +21,7 @@ const WindowComPort = require('window-com-port') ;
 
 ```
 
-var comPort = new WindowComPort(start) ;
+var comPort = new WindowsComPort(start) ;
 let port = "COM1" ;
 
 //Listener on Ready
@@ -65,9 +65,9 @@ try{
 
 ```
 
-const WindowComPort     = require('./index') ;
+const WindowsComPort     = require('./index') ;
 
-var comPort = new WindowComPort(start) ;
+var comPort = new WindowsComPort(start) ;
 let port = "COM1" ;
 
 //Listener on Ready

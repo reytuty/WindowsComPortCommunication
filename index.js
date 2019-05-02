@@ -12,6 +12,7 @@ function WindowsComPortCommunication(){
   let me = this ;
   let avaiblePorts = new Map();
   let portConnections = new Map() ;
+  let parsersPort = new Map() ;
   let onDataSignals = new Map() ;
   let arrayPorts = [] ;
   let connected = false ;
@@ -68,6 +69,7 @@ function WindowsComPortCommunication(){
         parser.parseData(data) ;
       }) ;
       portConnections.set(portName, p )
+      parsersPort.set(portName, parser) ;
     }
     return portConnections.get(portName) ;
   }
