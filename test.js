@@ -1,6 +1,6 @@
-const WindowComPort     = require('./index') ;
+const WindowsComPort     = require('./index') ;
 
-var comPort = new WindowComPort(start) ;
+var comPort = new WindowsComPort(start) ;
 let port = "COM1" ;
 
 //Listener on Ready
