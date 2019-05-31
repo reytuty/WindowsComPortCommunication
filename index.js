@@ -27,6 +27,10 @@ function WindowsComPortCommunication(){
     getSignalToPort(portName).add( method ) ;
     getPortConnection(portName) ;
   }
+  var configToPort = new Map() ;
+  this.setConfigToPort = (port, config)=>{
+    configToPort.set(port, config);
+  }
   /**
    * OnReady Event called when it is ready to send message
    */
@@ -60,7 +64,8 @@ function WindowsComPortCommunication(){
   }
   function getPortConnection(portName){
     if(!portConnections.has(portName)){
-      let p = new SerialPort(portName) ;
+      let portConfig = configToPort.get( portName ) ;
+      let p = new SerialPort(portName, portConfig ) ;
       let parser = new StreamSocket2Eevent( 10 ) ;
       parser.addOnData((data)=>{
         dispatchTo(portName, data );

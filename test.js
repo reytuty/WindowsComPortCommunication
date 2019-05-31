@@ -1,8 +1,16 @@
 const WindowsComPort     = require('./index') ;
 
-var comPort = new WindowsComPort(start) ;
-let port = "COM1" ;
+var comPort = new WindowsComPort() ;
 
+let port = "COM1" ;
+// * opcional set config info to port
+comPort.setConfigToPort(port, {
+    baudRate: 9600,
+    dataBits: 8,
+    parity: 'none',
+    stopBits: 1,
+    flowControl: false
+} ) ;
 //Listener on Ready
 comPort.onReady.add(()=>{
     //its ready, show avaible ports
