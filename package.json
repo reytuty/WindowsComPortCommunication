@@ -1,6 +1,6 @@
 {
   "name": "windows-com-port",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Node js Library to read and write in windows port using socket. Good for Arduino projects.",
   "main": "index.js",
   "scripts": {
