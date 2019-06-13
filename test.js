@@ -18,6 +18,18 @@ comPort.onReady.add(()=>{
     console.log("Avaible ports", ports) ;
 }) ;
 
+comPort.onConnected.add((info)=>{
+    console.log(info) ;
+    //info has:
+    //{totalPorts, totalConnected, ports}
+    info.totalPorts;
+    info.tltalConnected;
+    info.ports.forEach((portInfo)=>{
+        //inf has: {port:string, connected:bool}
+        console.log(portInfo);
+    });
+});
+
 comPort.connect() ;
 
 //TO READ

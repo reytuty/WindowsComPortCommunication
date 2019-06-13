@@ -14,18 +14,42 @@ function WindowsComPortCommunication(){
   let portConnections = new Map() ;
   let parsersPort = new Map() ;
   let onDataSignals = new Map() ;
+  let portConnectionsInfo = [] ;
   let arrayPorts = [] ;
   let connected = false ;
   this.showLog = false ;
+  /**
+   * {totalPorts:me.totalPorts, totalConnected:me.totalPortsConnection, ports:portConnectionsInfo}
+   */
+  this.onConnect = new Signal() ;
+  this.totalPorts = 0;
+  this.totalPortsConnection = 0 ;
   function getSignalToPort( port ){
     if(!onDataSignals.has(port)){
       onDataSignals.set(port, new Signal()) ;
     }
     return onDataSignals.get(port) ;
   }
+  /**
+   * retorna array de objetos com port e connected
+   * [{port, connected},{port, connected},...]
+   */
+  this.getPortConnectionsInfo = ()=>{
+    return portConnectionsInfo ;
+  }
+  function updateTotalConnection(){
+    portConnectionsInfo = [] ;
+    me.totalPortsConnection = 0;
+    portConnections.forEach((value, key)=>{
+      if(value && value.isConnected){
+        me.totalPortsConnection++;
+      }
+      portConnectionsInfo.push({port:key, connected:value.isConnected});
+    });
+    me.onConnect.dispatch({totalPorts:me.totalPorts, totalConnected:me.totalPortsConnection, ports:portConnectionsInfo});
+  }
   this.addOnData = (portName, method)=>{
     getSignalToPort(portName).add( method ) ;
-    getPortConnection(portName) ;
   }
   var configToPort = new Map() ;
   this.setConfigToPort = (port, config)=>{
@@ -41,13 +65,16 @@ function WindowsComPortCommunication(){
           return;
       }
       avaiblePorts.clear() ;
-      arrayPorts = [];
+      arrayPorts = [] ;
       SerialPort.list(function (err, ports) {
         if(me.showLog) console.log('######################################');
-        if(me.showLog) console.log('Avaible Ports:')
+        if(me.showLog) console.log('Avaible Ports:');
+        me.totalPorts = ports.length ;
         ports.forEach(function(port) {
-          avaiblePorts.set(port.comName, port.pnpId);
+          avaiblePorts.set(port.comName, port.pnpId) ;
           arrayPorts.push(port.comName) ;
+          //criando a conexão imediatamente com todas as portas
+          getPortConnection(port.comName);
           if(me.showLog) console.log(port.comName, "\t\t" , port.pnpId);
         });
         if(me.showLog) console.log('######################################');
@@ -66,15 +93,22 @@ function WindowsComPortCommunication(){
     if(!portConnections.has(portName)){
       let portConfig = configToPort.get( portName ) ;
       let p = new SerialPort(portName, portConfig ) ;
+      p.isConnected = false ;
+      portConnections.set(portName, p )
+      parsersPort.set(portName, parser) ;
+
       let parser = new StreamSocket2Eevent( 10 ) ;
       parser.addOnData((data)=>{
         dispatchTo(portName, data );
       }) ;
-      p.on('data', (data)=>{
-        parser.parseData(data) ;
+      p.on("open", ()=>{
+        p.isConnected = true ;
+        updateTotalConnection();
+        p.on('data', (data)=>{
+          parser.parseData(data) ;
+        }) ;
       }) ;
-      portConnections.set(portName, p )
-      parsersPort.set(portName, parser) ;
+      
     }
     return portConnections.get(portName) ;
   }
