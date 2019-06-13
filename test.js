@@ -2,6 +2,11 @@ const WindowsComPort     = require('./index') ;
 
 var comPort = new WindowsComPort() ;
 
+/*
+Port name on macOS:
+
+/dev/tty.Bluetooth-Incoming-Port
+*/
 let port = "COM1" ;
 // * opcional set config info to port
 comPort.setConfigToPort(port, {
@@ -18,7 +23,7 @@ comPort.onReady.add(()=>{
     console.log("Avaible ports", ports) ;
 }) ;
 
-comPort.onConnected.add((info)=>{
+comPort.onConnect.add((info)=>{
     console.log(info) ;
     //info has:
     //{totalPorts, totalConnected, ports}
