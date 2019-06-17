@@ -96,9 +96,10 @@ function WindowsComPortCommunication(){
       let p = new SerialPort(portName, portConfig ) ;
       p.isConnected = false ;
       portConnections.set(portName, p )
-      parsersPort.set(portName, parser) ;
-
+      
       let parser = new StreamSocket2Eevent( 10 ) ;
+      parsersPort.set(portName, parser) ;
+      
       parser.addOnData((data)=>{
         dispatchTo(portName, data );
       }) ;
