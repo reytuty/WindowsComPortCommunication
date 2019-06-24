@@ -14,9 +14,11 @@ function WindowsComPortCommunication(){
   let portConnections = new Map() ;
   let parsersPort = new Map() ;
   let onDataSignals = new Map() ;
+  let portInterval = new Map();
+  let portMessagePool = new Map();
   let portConnectionsInfo = [] ;
   let arrayPorts = [] ;
-  let connected = false ;
+  let initialized = false ;
   this.showLog = false ;
   /**
    * {totalPorts:me.totalPorts, totalConnected:me.totalPortsConnection, ports:portConnectionsInfo}
@@ -53,6 +55,21 @@ function WindowsComPortCommunication(){
   }
   var configToPort = new Map() ;
   this.setConfigToPort = (port, config)=>{
+    console.log('set config');
+    if( !config.hasOwnProperty('delay') ){
+      config.delay = 1000;
+    }
+    if( config.delay > 0 ){
+      clearInterval(portInterval.get( port));
+      var interval = setInterval((a)=>{
+        //console.log(new Date());
+        sendNextMessage(a);
+        
+      }, config.delay ,port);
+      portInterval.set( port, interval );
+    }
+
+    delete config.delay;
     configToPort.set(port, config);
   }
   /**
@@ -60,11 +77,15 @@ function WindowsComPortCommunication(){
    */
   this.onReady = new Signal() ; 
   
-  this.connect = ()=>{
-      if(connected){
+  this.connect = ( comName) => {
+    getPortConnection(comName);
+  }
+
+  this.init = ()=>{
+      if(initialized){
           return;
       }
-      connected = true;
+      initialized = true;
       avaiblePorts.clear() ;
       arrayPorts = [] ;
       SerialPort.list(function (err, ports) {
@@ -75,16 +96,14 @@ function WindowsComPortCommunication(){
           avaiblePorts.set(port.comName, port.pnpId) ;
           arrayPorts.push(port.comName) ;
           //criando a conexão imediatamente com todas as portas
-          getPortConnection(port.comName);
           if(me.showLog) console.log(port.comName, "\t\t" , port.pnpId);
         });
         if(me.showLog) console.log('######################################');
         me.onReady.dispatch() ;
-        
     });
   }
-  this.reconnect = ()=>{
-      connected = false ;
+  this.restart = ()=>{
+      initialized = false ;
       me.connect() ;
   }
   function dispatchTo( portName, data ){
@@ -110,10 +129,48 @@ function WindowsComPortCommunication(){
           parser.parseData(data) ;
         }) ;
       }) ;
+      p.on('error', function(err) {
+        console.log('Error: ', err.message)
+      })
       
     }
     return portConnections.get(portName) ;
   }
+  
+  function appendMessage( portName, message){
+    var list = [];
+    if( portMessagePool.has(portName) ){
+      list = portMessagePool.get(portName)
+    }
+    list.push(message);
+    portMessagePool.set(portName, list);
+  }
+
+  function getNextMessage( portName ){
+    if( !portMessagePool.has(portName) ){
+      return null;
+    }
+
+    var list = portMessagePool.get(portName);
+
+    var message = list.shift();
+    if( message == undefined){
+      portMessagePool.delete(portName);
+      return null;
+    }
+    return message;
+  }
+
+  function sendNextMessage( portName ){
+    var message = getNextMessage( portName );
+    if( message == null ){
+      return;
+    }
+    let portConnection = getPortConnection(portName);
+    
+    portConnection.write( message );
+  }
+
   /**
    * Returns Avaible ports
    * Remember: Windows 
@@ -125,8 +182,14 @@ function WindowsComPortCommunication(){
     if(!avaiblePorts.has(portName)){
       throw new Error( "There is no port with name "+ portName ) ;
     }
+    if( portInterval.has(portName) ){
+      appendMessage( portName, value);
+      return;
+    }
+    
     let portConnection = getPortConnection(portName);
-    portConnection.write(value) ;
+    portConnection.write(value);
+    
   }
 }
 
