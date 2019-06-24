@@ -62,7 +62,7 @@ function WindowsComPortCommunication(){
     if( config.delay > 0 ){
       clearInterval(portInterval.get( port));
       var interval = setInterval((a)=>{
-        console.log(new Date());
+        //console.log(new Date());
         sendNextMessage(a);
         
       }, config.delay ,port);
@@ -167,7 +167,7 @@ function WindowsComPortCommunication(){
       return;
     }
     let portConnection = getPortConnection(portName);
-    console.log(message);
+    
     portConnection.write( message );
   }
 
@@ -182,7 +182,6 @@ function WindowsComPortCommunication(){
     if(!avaiblePorts.has(portName)){
       throw new Error( "There is no port with name "+ portName ) ;
     }
-    console.log('write');
     if( portInterval.has(portName) ){
       appendMessage( portName, value);
       return;
