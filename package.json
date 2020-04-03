@@ -1,6 +1,6 @@
 {
   "name": "windows-com-port",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Node js Library to read and write in windows port using socket. Good for Arduino projects.",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/reytuty/WindowsComPortCommunication#readme",
   "dependencies": {
-    "serialport": "^7.1.5",
+    "serialport": "^8.0.7",
     "signals": "^1.0.0",
     "socketstream2event": "^1.0.4"
   }
