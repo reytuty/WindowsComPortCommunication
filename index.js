@@ -67,16 +67,16 @@ function WindowsComPortCommunication(){
       connected = true;
       avaiblePorts.clear() ;
       arrayPorts = [] ;
-      SerialPort.list().then((err, ports) =>{
+      SerialPort.list().then((ports) =>{
         if(me.showLog) console.log('######################################');
         if(me.showLog) console.log('Avaible Ports:');
         me.totalPorts = ports.length ;
         ports.forEach(function(port) {
-          avaiblePorts.set(port.comName, port.pnpId) ;
-          arrayPorts.push(port.comName) ;
+          avaiblePorts.set(port.path, port.pnpId) ;
+          arrayPorts.push(port.path) ;
           //criando a conexão imediatamente com todas as portas
-          getPortConnection(port.comName);
-          if(me.showLog) console.log(port.comName, "\t\t" , port.pnpId);
+          getPortConnection(port.path);
+          if(me.showLog) console.log(port.path, "\t\t" , port.pnpId);
         });
         if(me.showLog) console.log('######################################');
         me.onReady.dispatch() ;
