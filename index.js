@@ -128,6 +128,9 @@ function WindowsComPortCommunication(){
     let portConnection = getPortConnection(portName);
     portConnection.write(value) ;
   }
+  this.init = ()=>{
+    me.connect() ;
+  }
 }
 
 module.exports = WindowsComPortCommunication ;
