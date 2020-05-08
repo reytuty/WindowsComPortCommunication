@@ -67,7 +67,7 @@ function WindowsComPortCommunication(){
       connected = true;
       avaiblePorts.clear() ;
       arrayPorts = [] ;
-      SerialPort.list(function (err, ports) {
+      SerialPort.list().then((err, ports) =>{
         if(me.showLog) console.log('######################################');
         if(me.showLog) console.log('Avaible Ports:');
         me.totalPorts = ports.length ;
@@ -81,6 +81,8 @@ function WindowsComPortCommunication(){
         if(me.showLog) console.log('######################################');
         me.onReady.dispatch() ;
         
+    }).catch((e)=>{
+      console.log(e) ;
     });
   }
   this.reconnect = ()=>{
